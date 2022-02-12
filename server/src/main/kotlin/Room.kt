@@ -14,6 +14,11 @@ class Room(val roomId: String){
     private val roomThread = RoomThread(messages, roomId)
     private val thread  = Thread{roomThread.run()}
 
+
+    init {
+        thread.run()
+    }
+
     fun end(){
         roomThread.stop()
         thread.join()
