@@ -7,13 +7,6 @@ import java.nio.charset.Charset
 import java.util.*
 import kotlin.concurrent.thread
 
-fun main(args: Array<String>) {
-    val address = "localhost"
-    val port = 9999
-
-    val client = Client(address, port)
-    client.run()
-}
 
 class Client(address: String, port: Int) {
     private val connection: Socket = Socket(address, port)
