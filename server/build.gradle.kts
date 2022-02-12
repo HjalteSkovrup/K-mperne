@@ -12,9 +12,6 @@ repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-}
 sourceSets.main {
     java.srcDirs( "src/main/kotlin")
 }
@@ -22,4 +19,8 @@ sourceSets.main {
 application {
 
     mainClass.set( "ServerKt" )
+}
+
+dependencies {
+    implementation(project(":general"))
 }

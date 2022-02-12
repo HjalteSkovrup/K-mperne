@@ -10,9 +10,6 @@ version = "1.0-SNAPSHOT"
 repositories {
     mavenCentral()
 }
-dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib")
-}
 
 sourceSets.main {
     java.srcDirs( "src/main/kotlin")
@@ -20,4 +17,8 @@ sourceSets.main {
 
 application {
     mainClass.set( "ClientKt" )
+}
+
+dependencies {
+    implementation(project(":general"))
 }
