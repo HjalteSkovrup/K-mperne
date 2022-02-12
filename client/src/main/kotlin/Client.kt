@@ -30,7 +30,6 @@ class Client(address: String, port: Int) {
         thread { read() }
         while (connected) {
             val input = readln()
-            println(input)
             if(input.equals("create room")){
                 write(ClientCreateRoomMessage("testId"))
             }
