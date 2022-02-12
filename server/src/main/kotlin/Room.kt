@@ -12,7 +12,7 @@ import kotlin.collections.HashMap
 class Room(val roomId: String){
     val messages = LinkedBlockingQueue<Pair<GameMessage,ClientHandler>>()
     private val roomThread = RoomThread(messages, roomId)
-    private val thread  = Thread{roomThread}
+    private val thread  = Thread{roomThread.run()}
 
     fun end(){
         roomThread.stop()
@@ -26,6 +26,7 @@ class Room(val roomId: String){
         private var shouldContinue = true
 
         override fun run() {
+            println("STARTING ROOM : " + roomId)
             val timer =Timer("NameOfMyTimer", true)
 
             timer.schedule(TimeUnit.MINUTES.toMillis(0),TimeUnit.MINUTES.toMillis(5)) {

@@ -11,7 +11,7 @@ interface GameStateUpdater {
     fun updateGameState(gameState: GameState, clientId: UUID) : GameState
 }
 
-class Position(x: Int, y: Int)
+class Position(x: Int, y: Int) : Serializable
 
 class ClientCreateRoomMessage(val roomId: String) : GameMessage()
 

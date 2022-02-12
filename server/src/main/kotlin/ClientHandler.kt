@@ -43,6 +43,7 @@ class ClientHandler(private val client: Socket, val clientId: UUID) {
                     if(roomIds.contains(message.roomId))
                         writer.writeObject(ErrorMessage(clientId, "Failed to create room: a room with that name already exists"))
                     else {
+                        println("CLIENT : " + clientId + " CRETATED ROOM : " + message.roomId)
                         roomIds.add(message.roomId)
                         val room = Room(message.roomId)
                         roomQueues[message.roomId] = room
@@ -51,11 +52,13 @@ class ClientHandler(private val client: Socket, val clientId: UUID) {
                     }
                 }
                 else if(message is ClientConnectToRoomMessage){
+                    println("CLIENT : " + clientId + " CONNECTED TO ROOM : " + message.roomId)
                     val room = roomQueues[message.roomId]!!
                     clientsToRoomMap[clientId] = room
                     room.messages.add(Pair(message,this))
                 }
                 else {
+                    println("RECIEVED MOVE MESSAGE : " + clientId )
                     val room = roomQueues[clientsToRoomMap[clientId]!!.roomId]!!
                     room.messages.add(Pair(message, this))
                 }

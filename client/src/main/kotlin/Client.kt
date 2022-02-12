@@ -1,3 +1,6 @@
+import message.*
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
 import java.io.OutputStream
 import java.net.Socket
 import java.nio.charset.Charset
@@ -19,31 +22,43 @@ class Client(address: String, port: Int) {
     init {
         println("Connected to server at $address on port $port")
     }
+    private val writer = ObjectOutputStream(connection.getOutputStream())
+    private val reader = ObjectInputStream(connection.getInputStream())
 
-    private val reader: Scanner = Scanner(connection.getInputStream())
-    private val writer: OutputStream = connection.getOutputStream()
 
     fun run() {
         thread { read() }
         while (connected) {
             val input = readln()
+            println(input)
+            if(input.equals("create room")){
+                write(ClientCreateRoomMessage("testId"))
+            }
+            else if(input.equals("join room")){
+                write(ClientConnectToRoomMessage("testId"))
+            }
+            else if(input.equals("move")){
+                write(ClientPositionMessage(Position(15,15)))
+            } else if(input.equals("leave")){
+                write(ClientDisconnectMessage())
+            }
             if ("exit" in input) {
                 connected = false
                 reader.close()
                 connection.close()
-            } else {
-                write(input)
             }
         }
 
     }
 
-    private fun write(message: String) {
-        writer.write((message + '\n').toByteArray(Charset.defaultCharset()))
+    private fun write(message: GameMessage) {
+        writer.writeObject(message)
     }
 
     private fun read() {
-        while (connected && reader.hasNext())
-            println(reader.nextLine())
+        while (connected ) {
+            val obj = reader.readObject();
+            println(obj)
+        }
     }
 }
