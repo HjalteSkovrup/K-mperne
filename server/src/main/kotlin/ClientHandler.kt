@@ -7,6 +7,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ConcurrentSkipListSet
+import kotlin.math.log
 
 private var roomQueues = ConcurrentHashMap<String,Room>()
 private var clientsToRoomMap = ConcurrentHashMap<UUID, Room>()
@@ -45,14 +46,19 @@ class ClientHandler(private val client: Socket, val clientId: UUID) {
                     else {
                         println("CLIENT : " + clientId + " CRETATED ROOM : " + message.roomId)
                         roomIds.add(message.roomId)
+                        roomToClientsMap[message.roomId] = ConcurrentLinkedQueue()
+                        roomToClientsMap[message.roomId]!!.add(this)
+
                         val room = Room(message.roomId)
                         roomQueues[message.roomId] = room
                         clientsToRoomMap[clientId] = room
+
                         room.messages.add(Pair(ClientConnectToRoomMessage(message.roomId),this))
                     }
                 }
                 else if(message is ClientConnectToRoomMessage){
                     println("CLIENT : " + clientId + " CONNECTED TO ROOM : " + message.roomId)
+                    roomToClientsMap[message.roomId]!!.add(this)
                     val room = roomQueues[message.roomId]!!
                     clientsToRoomMap[clientId] = room
                     room.messages.add(Pair(message,this))
@@ -60,7 +66,8 @@ class ClientHandler(private val client: Socket, val clientId: UUID) {
                 else {
                     println("RECIEVED MOVE MESSAGE : " + clientId )
                     val room = roomQueues[clientsToRoomMap[clientId]!!.roomId]!!
-                    room.messages.add(Pair(message, this))
+                    val messages = room.messages
+                    messages.add(Pair(message, this))
                 }
 
             } catch (ex: Exception) {
@@ -72,6 +79,7 @@ class ClientHandler(private val client: Socket, val clientId: UUID) {
 
     fun write(message: GameState) {
         writer.writeObject(message)
+        writer.reset()
     }
 
     private fun shutdown() {

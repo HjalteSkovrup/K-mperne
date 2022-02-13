@@ -1,7 +1,6 @@
 package message;
 
 import room.GameState
-import room.RoomId
 import java.io.Serializable
 import java.util.*
 
@@ -11,7 +10,11 @@ interface GameStateUpdater {
     fun updateGameState(gameState: GameState, clientId: UUID) : GameState
 }
 
-class Position(x: Int, y: Int) : Serializable
+class Position(val x: Int, val y: Int) : Serializable {
+    override fun toString(): String {
+        return "Position(x=$x, y=$y)"
+    }
+}
 
 class ClientCreateRoomMessage(val roomId: String) : GameMessage()
 

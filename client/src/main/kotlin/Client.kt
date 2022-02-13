@@ -1,4 +1,5 @@
 import message.*
+import room.GameState
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.io.OutputStream
@@ -11,6 +12,7 @@ import kotlin.concurrent.thread
 class Client(address: String, port: Int) {
     private val connection: Socket = Socket(address, port)
     private var connected: Boolean = true
+    private var state : GameState? = null;
 
     init {
         println("Connected to server at $address on port $port")
@@ -33,6 +35,8 @@ class Client(address: String, port: Int) {
                 write(ClientPositionMessage(Position(15,15)))
             } else if(input.equals("leave")){
                 write(ClientDisconnectMessage())
+            } else if(input.equals("print")){
+                println(state)
             }
             if ("exit" in input) {
                 connected = false
@@ -47,10 +51,11 @@ class Client(address: String, port: Int) {
         writer.writeObject(message)
     }
 
+
     private fun read() {
         while (connected ) {
-            val obj = reader.readObject();
-            println(obj)
+            val obj = reader.readObject()
+            state = obj as GameState?
         }
     }
 }

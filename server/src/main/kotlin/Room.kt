@@ -8,16 +8,14 @@ import java.util.concurrent.LinkedBlockingQueue
 import kotlin.concurrent.schedule
 import java.util.concurrent.*
 import kotlin.collections.HashMap
+import kotlin.concurrent.scheduleAtFixedRate
+import kotlin.concurrent.thread
 
 class Room(val roomId: String){
     val messages = LinkedBlockingQueue<Pair<GameMessage,ClientHandler>>()
     private val roomThread = RoomThread(messages, roomId)
-    private val thread  = Thread{roomThread.run()}
+    private val thread  = thread{ roomThread.run()}
 
-
-    init {
-        thread.run()
-    }
 
     fun end(){
         roomThread.stop()
@@ -34,7 +32,7 @@ class Room(val roomId: String){
             println("STARTING ROOM : " + roomId)
             val timer =Timer("NameOfMyTimer", true)
 
-            timer.schedule(TimeUnit.MINUTES.toMillis(0),TimeUnit.MINUTES.toMillis(5)) {
+            timer.scheduleAtFixedRate(TimeUnit.MILLISECONDS.toMillis(0),TimeUnit.MILLISECONDS.toMillis(15)) {
                 val clients = roomToClientsMap[roomId]!!
 
                 clients.forEach{
